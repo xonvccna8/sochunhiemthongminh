@@ -108,7 +108,7 @@ export default function AuthScreen({ onBack, systemError = '' }: { onBack: () =>
           <div className="auth-mini-logo"><span>S</span><b>Sổ Chủ Nhiệm</b></div>
           <div className="auth-heading">
             <h2>{mode === 'login' ? `Đăng nhập ${accountType === 'teacher' ? 'giáo viên' : 'học sinh'}` : 'Tài khoản học sinh'}</h2>
-            <p>{mode === 'login' ? `Sử dụng tài khoản ${accountType === 'teacher' ? 'giáo viên do nhà trường cấp' : 'đã được giáo viên chủ nhiệm cấp'} để tiếp tục.` : 'Chọn đúng họ tên để xem và sao chép thông tin đăng nhập.'}</p>
+            <p>{mode === 'login' ? `Sử dụng tài khoản ${accountType === 'teacher' ? 'giáo viên do nhà trường cấp' : 'đã được giáo viên chủ nhiệm cấp'} để tiếp tục.` : 'Bấm đúng họ tên để tự động điền tài khoản đăng nhập.'}</p>
           </div>
           <div className="auth-tabs" role="tablist">
             <button className={mode === 'login' ? 'active' : ''} onClick={() => { setMode('login'); setMessage(null); }}>Đăng nhập</button>
