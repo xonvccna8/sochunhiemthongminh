@@ -35,6 +35,24 @@ service cloud.firestore {
       return hasUserProfile() && userRole() == 'teacher';
     }
 
+    function teacherClassName() {
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data.get('className', '10C3');
+    }
+
+    function teacherSchoolYear() {
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data.get('schoolYear', '2026 - 2027');
+    }
+
+    function managesHomeroomProfile(profileData) {
+      return isHomeroomTeacher()
+        && profileData.className == teacherClassName()
+        && profileData.schoolYear == teacherSchoolYear();
+    }
+
     function ownsHomeroomProfile() {
       return signedIn() && request.auth.uid == resource.data.ownerId;
     }
@@ -255,11 +273,16 @@ service cloud.firestore {
 
     // ===== 5. Ứng dụng Sổ Chủ Nhiệm Online =====
     match /profiles/{userId} {
-      allow get: if isHomeroomTeacher() || isOwner(userId);
-      allow list: if isHomeroomTeacher();
-      allow create, update: if isHomeroomTeacher()
+      allow get: if managesHomeroomProfile(resource.data) || isOwner(userId);
+      allow list: if managesHomeroomProfile(resource.data);
+      allow create: if managesHomeroomProfile(request.resource.data)
         || (isOwner(userId) && writesOwnFixedHomeroomProfile());
-      allow delete: if isHomeroomTeacher();
+      allow update: if (
+          managesHomeroomProfile(resource.data)
+          && managesHomeroomProfile(request.resource.data)
+        )
+        || (isOwner(userId) && writesOwnFixedHomeroomProfile());
+      allow delete: if managesHomeroomProfile(resource.data);
     }
 
     match /publicProfiles/{token} {
@@ -267,13 +290,16 @@ service cloud.firestore {
       allow list: if false;
       allow create: if writesOwnFixedHomeroomProfile()
         && request.resource.data.shareToken == token;
-      allow update: if isHomeroomTeacher()
+      allow update: if (
+          managesHomeroomProfile(resource.data)
+          && managesHomeroomProfile(request.resource.data)
+        )
         || (
           ownsHomeroomProfile()
           && writesOwnFixedHomeroomProfile()
           && request.resource.data.shareToken == token
         );
-      allow delete: if isHomeroomTeacher() || ownsHomeroomProfile();
+      allow delete: if managesHomeroomProfile(resource.data) || ownsHomeroomProfile();
     }
 
     // ===== 6. Mặc định: chặn mọi truy cập khác =====
