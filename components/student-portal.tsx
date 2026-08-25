@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   Clipboard,
   Eye,
-  FilePenLine,
   Home,
   Link2,
   Save,

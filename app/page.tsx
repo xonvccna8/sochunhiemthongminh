@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import {
   ArrowRight,
   BarChart3,
   CheckCircle2,
-  Download,
   Eye,
   FileCheck2,
   FileSpreadsheet,
@@ -113,16 +113,17 @@ function PublicProfilePage({ token, onHome }: { token: string; onHome: () => voi
   return <main className="public-profile-page"><header><Logo /><div><span><ShieldCheck size={16} /> Liên kết xem dành cho phụ huynh</span><button onClick={() => window.print()}><Printer size={17} /> In hồ sơ</button></div></header><section className="public-profile-wrap"><ProfileView profile={profile} publicMode /><div className="public-footer-note"><ShieldCheck size={18} /><p><b>Thông tin được cung cấp bởi học sinh và xác nhận trên Sổ Chủ Nhiệm Online.</b><span>Giáo viên chủ nhiệm: {profile.teacherName}</span></p></div></section></main>;
 }
 
-export default function Home() {
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [screen, setScreen] = useState<'landing' | 'auth'>('landing');
   const [user, setUser] = useState<User | null>(null);
   const [record, setRecord] = useState<UserRecord | null>(null);
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [loading, setLoading] = useState(true);
-  const [publicToken, setPublicToken] = useState('');
+  const publicToken = searchParams.get('hoso') || '';
 
   useEffect(() => {
-    setPublicToken(new URLSearchParams(window.location.search).get('hoso') || '');
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (!currentUser) {
@@ -158,10 +159,14 @@ export default function Home() {
     setScreen('landing');
   };
 
-  if (publicToken) return <PublicProfilePage token={publicToken} onHome={() => { window.history.replaceState({}, '', '/'); setPublicToken(''); }} />;
+  if (publicToken) return <PublicProfilePage token={publicToken} onHome={() => router.replace('/')} />;
   if (loading) return <Spinner />;
   if (user && record?.role === 'teacher') return <TeacherPortal teacherName={FIXED_TEACHER} onLogout={logout} />;
   if (user && record?.role === 'student') return <StudentPortal user={user} initialProfile={profile} onLogout={logout} />;
   if (screen === 'auth') return <AuthScreen onBack={() => setScreen('landing')} />;
   return <Landing onLogin={() => setScreen('auth')} />;
+}
+
+export default function Home() {
+  return <Suspense fallback={<Spinner />}><HomeContent /></Suspense>;
 }

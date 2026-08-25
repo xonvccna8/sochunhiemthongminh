@@ -2,6 +2,11 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 
+const productionDomain = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (productionDomain ? `https://${productionDomain}` : 'http://localhost:3000');
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -13,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(siteUrl),
   title: 'Sổ Chủ Nhiệm Online · Lớp 10C3',
   description: 'Quản lý hồ sơ học sinh lớp 10C3, năm học 2026 – 2027.',
   openGraph: {

@@ -144,7 +144,7 @@ export default function TeacherPortal({ teacherName, onLogout }: { teacherName: 
               <table className="roster-table">
                 <thead><tr><th>STT</th><th>Họ và tên</th><th>Giới tính</th><th>Ngày sinh</th><th>Dân tộc</th><th>Học sinh trường</th><th>Hồ sơ online</th><th></th></tr></thead>
                 <tbody>
-                  {shown.length ? shown.map(({ student, profile }) => {
+                  {loading ? <tr><td colSpan={8} className="empty-row">Đang đồng bộ trạng thái hồ sơ từ Firestore...</td></tr> : shown.length ? shown.map(({ student, profile }) => {
                     const status = profile?.status || 'not-started';
                     return <tr key={student.no}>
                       <td><span className="roster-number">{String(student.no).padStart(2, '0')}</span></td>

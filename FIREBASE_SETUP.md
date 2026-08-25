@@ -2,7 +2,7 @@
 
 Website đã dùng cấu hình web app của dự án Firebase `xonvccna8`. Để đưa dữ liệu thật vào hoạt động, thực hiện một lần các bước sau trong Firebase Console:
 
-1. Trong **Authentication → Sign-in method**, bật **Email/Password**.
+1. Trong **Authentication → Sign-in method**, bật **Email/Password**. Sau lần triển khai Vercel đầu tiên, thêm domain `ten-du-an.vercel.app` vào **Authentication → Settings → Authorized domains**.
 2. Trong **Firestore Database**, tạo cơ sở dữ liệu ở chế độ production, ưu tiên vùng gần Việt Nam.
 3. Mở tab **Rules**, dán toàn bộ nội dung file `firestore.rules`, sau đó bấm **Publish**.
 4. Đăng ký tài khoản đầu tiên từ website bằng email của giáo viên.
