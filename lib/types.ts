@@ -5,6 +5,8 @@ export type UserRecord = {
   email: string;
   displayName: string;
   role: Role;
+  className?: string;
+  schoolYear?: string;
 };
 
 export type StudentProfile = {

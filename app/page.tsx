@@ -24,10 +24,9 @@ import {
   X,
 } from 'lucide-react';
 import { auth, db } from '@/lib/firebase';
-import { FIXED_TEACHER, StudentProfile, UserRecord } from '@/lib/types';
+import { StudentProfile, UserRecord } from '@/lib/types';
 import AuthScreen from '@/components/auth-screen';
 import StudentPortal from '@/components/student-portal';
-import TeacherPortal from '@/components/teacher-portal';
 import ProfileView from '@/components/profile-view';
 import { Logo, Spinner } from '@/components/ui';
 
@@ -154,6 +153,10 @@ function HomeContent() {
     return unsubscribe;
   }, []);
 
+  useEffect(() => {
+    if (!loading && user && record?.role === 'teacher') router.replace('/giao-vien');
+  }, [loading, record, router, user]);
+
   const logout = async () => {
     await signOut(auth);
     setScreen('landing');
@@ -161,7 +164,7 @@ function HomeContent() {
 
   if (publicToken) return <PublicProfilePage token={publicToken} onHome={() => router.replace('/')} />;
   if (loading) return <Spinner />;
-  if (user && record?.role === 'teacher') return <TeacherPortal teacherName={FIXED_TEACHER} onLogout={logout} />;
+  if (user && record?.role === 'teacher') return <Spinner label="Đang mở trang quản lý giáo viên..." />;
   if (user && record?.role === 'student') return <StudentPortal user={user} initialProfile={profile} onLogout={logout} />;
   if (screen === 'auth') return <AuthScreen onBack={() => setScreen('landing')} />;
   return <Landing onLogin={() => setScreen('auth')} />;

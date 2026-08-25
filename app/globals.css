@@ -692,3 +692,66 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .parent-cards h4 { font-size: 15px; }
   .parent-cards p { font-size: 12px; }
 }
+
+/* Teacher-only class management */
+.teacher-access-denied { min-height: 100vh; padding: 30px; display: grid; place-items: center; align-content: center; text-align: center; background: radial-gradient(circle at 50% 15%, #e5efff, transparent 30rem), #f5f8fc; }
+.teacher-access-denied > span { width: 68px; height: 68px; display: grid; place-items: center; border-radius: 20px; color: #315fb3; background: #e5eeff; box-shadow: 0 15px 30px rgba(47,91,165,.14); }
+.teacher-access-denied h1 { margin: 20px 0 8px; color: #172943; font-size: 27px; }
+.teacher-access-denied p { margin: 0 0 20px; color: #718098; font-size: 14px; }
+.teacher-access-denied button { height: 42px; padding: 0 17px; border: 0; border-radius: 10px; color: #fff; background: linear-gradient(135deg, #2769d8, #4f62d8); font-size: 13px; font-weight: 750; }
+
+.student-open-button { width: 100%; padding: 0; border: 0; text-align: left; background: transparent; cursor: pointer; }
+.student-open-button:hover b { color: #2065cf; text-decoration: underline; text-underline-offset: 3px; }
+.row-actions button.edit { color: #2563c8; background: #edf4ff; }
+.row-actions button.delete { color: #d04444; background: #fff0f0; }
+.row-actions button.edit:hover { border-color: #9fc1f7; background: #dfeeff; }
+.row-actions button.delete:hover { border-color: #f1aaaa; background: #ffe1e1; }
+.row-actions button:disabled { cursor: not-allowed; opacity: .36; }
+
+.teacher-record-actions { flex-wrap: wrap; }
+.modal-profile-actions button.edit { color: #255fbd; border-color: #c7daf7; background: #eff5ff; }
+.modal-profile-actions button.danger { color: #c83f3f; border-color: #f1c7c7; background: #fff5f5; }
+
+.teacher-profile-editor { display: grid; gap: 18px; }
+.teacher-edit-assignment { padding: 16px 18px; display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 12px; border: 1px solid #cfe0f8; border-radius: 13px; color: #2d67bf; background: linear-gradient(135deg, #eef5ff, #f5f2ff); }
+.teacher-edit-assignment > svg { padding: 8px; box-sizing: content-box; border-radius: 10px; color: #fff; background: linear-gradient(145deg, #3479df, #6355cf); }
+.teacher-edit-assignment > div { display: flex; flex-direction: column; gap: 3px; }
+.teacher-edit-assignment span { color: #74849d; font-size: 11px; }
+.teacher-edit-assignment b { color: #28466f; font-size: 14px; }
+.teacher-edit-assignment em { padding: 6px 9px; border-radius: 8px; color: #365f9d; background: rgba(255,255,255,.72); font-size: 11px; font-style: normal; font-weight: 800; }
+.teacher-edit-section { padding: 21px; border: 1px solid #e0e7f0; border-radius: 15px; background: #fff; box-shadow: 0 8px 24px rgba(25,52,88,.045); }
+.teacher-edit-section h3 { margin: 0 0 18px; display: flex; align-items: center; gap: 9px; color: #273a57; font-size: 15px; }
+.teacher-edit-section h3 svg { color: #3475d4; }
+.teacher-edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.teacher-edit-grid label { min-width: 0; display: grid; gap: 7px; }
+.teacher-edit-grid label.wide { grid-column: 1 / -1; }
+.teacher-edit-grid label > span { color: #52637b; font-size: 12px; font-weight: 720; }
+.teacher-edit-grid input, .teacher-edit-grid select, .teacher-edit-grid textarea { width: 100%; min-height: 45px; padding: 11px 13px; border: 1px solid #d6dfeb; border-radius: 10px; outline: 0; color: #26364e; background: #fbfcfe; font: inherit; font-size: 14px; transition: .18s ease; }
+.teacher-edit-grid textarea { min-height: 72px; resize: vertical; line-height: 1.5; }
+.teacher-edit-grid input:focus, .teacher-edit-grid select:focus, .teacher-edit-grid textarea:focus { border-color: #3979db; background: #fff; box-shadow: 0 0 0 4px rgba(57,121,219,.11); }
+.teacher-edit-actions { position: sticky; bottom: -24px; z-index: 2; margin-top: 20px; padding: 13px; display: flex; justify-content: flex-end; gap: 9px; border: 1px solid #dce4ee; border-radius: 14px 14px 0 0; background: rgba(255,255,255,.94); box-shadow: 0 -12px 28px rgba(23,46,78,.08); backdrop-filter: blur(12px); }
+.teacher-edit-actions button { height: 43px; padding: 0 17px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid #d5deea; border-radius: 10px; color: #53637a; background: #fff; font-size: 13px; font-weight: 750; }
+.teacher-edit-actions button.primary { color: #fff; border: 0; background: linear-gradient(135deg, #276bd8, #5863d8); box-shadow: 0 9px 18px rgba(45,96,190,.22); }
+.teacher-edit-actions button:disabled { opacity: .55; }
+
+.delete-profile-confirm { padding: 10px 4px 4px; text-align: center; }
+.delete-profile-confirm > span { width: 62px; height: 62px; margin: 0 auto; display: grid; place-items: center; border-radius: 18px; color: #cf4141; background: #fff0f0; }
+.delete-profile-confirm h3 { margin: 17px 0 7px; color: #26364d; font-size: 19px; }
+.delete-profile-confirm p { max-width: 430px; margin: 0 auto; color: #718096; font-size: 13px; line-height: 1.6; }
+.delete-profile-confirm > div { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.delete-profile-confirm button { height: 43px; display: flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid #d8e0ea; border-radius: 10px; color: #56667d; background: #fff; font-size: 13px; font-weight: 750; }
+.delete-profile-confirm button.danger { color: #fff; border-color: #d74444; background: linear-gradient(135deg, #df4a4a, #bd3434); }
+
+@media (max-width: 640px) {
+  .teacher-access-denied h1 { font-size: 23px; }
+  .teacher-record-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .teacher-record-actions button { justify-content: center; }
+  .teacher-edit-assignment { grid-template-columns: 36px 1fr; padding: 14px; }
+  .teacher-edit-assignment em { grid-column: 2; width: fit-content; }
+  .teacher-edit-section { padding: 17px 14px; }
+  .teacher-edit-grid { grid-template-columns: 1fr; }
+  .teacher-edit-grid label.wide { grid-column: auto; }
+  .teacher-edit-grid input, .teacher-edit-grid select, .teacher-edit-grid textarea { min-height: 48px; font-size: 14px; }
+  .teacher-edit-actions { bottom: -11px; display: grid; grid-template-columns: 1fr 1fr; }
+  .teacher-edit-actions button { padding-inline: 10px; }
+}
