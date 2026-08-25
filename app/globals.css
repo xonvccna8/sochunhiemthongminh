@@ -398,6 +398,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .fixed-info b { color: #174b98; font-size: 14px; }
 .fixed-info p { max-width: 230px; display: flex; align-items: center; gap: 8px; color: #6f83a0; font-size: 10px; }
 .fixed-info p svg { flex: 0 0 auto; color: #2f8b68; }
+.student-identity-card { margin-bottom: 30px; overflow: hidden; border: 1px solid color-mix(in srgb, var(--step-primary) 22%, #d6e0ec); border-radius: 18px; background: #fff; box-shadow: 0 13px 30px color-mix(in srgb, var(--step-primary) 8%, transparent); }
+.student-identity-card > header { padding: 19px 21px; display: grid; grid-template-columns: 50px 1fr auto; align-items: center; gap: 14px; border-bottom: 1px solid #e4ebf3; background: linear-gradient(135deg, color-mix(in srgb, var(--step-soft) 78%, white), #f8fbff); }
+.student-identity-avatar { width: 50px; height: 50px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--step-primary) 24%, #d8e3ef); border-radius: 15px; color: #fff; background: linear-gradient(145deg, var(--step-primary), var(--step-secondary)); box-shadow: 0 8px 18px color-mix(in srgb, var(--step-primary) 24%, transparent); font-size: 18px; font-weight: 850; }
+.student-identity-card header > div { min-width: 0; }
+.student-identity-card header small { color: var(--step-primary); font-size: 9px; font-weight: 850; letter-spacing: .12em; }
+.student-identity-card header h3 { margin: 4px 0 3px; color: #1f3451; font-size: 20px; line-height: 1.25; }
+.student-identity-card header p { margin: 0; overflow-wrap: anywhere; color: #748399; font-size: 11px; }
+.student-identity-card header > b { padding: 8px 11px; display: flex; align-items: center; gap: 6px; border-radius: 10px; color: #18825a; background: #e8f8f1; font-size: 11px; white-space: nowrap; }
+.student-identity-grid { padding: 18px 21px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+.student-identity-grid > div { min-height: 61px; padding: 12px 14px; display: flex; flex-direction: column; justify-content: center; gap: 5px; border: 1px solid #e4eaf1; border-radius: 12px; background: #f9fbfd; }
+.student-identity-grid > div.wide { grid-column: span 3; }
+.student-identity-grid small { color: #8190a3; font-size: 10px; }
+.student-identity-grid b { color: #314761; font-size: 13px; line-height: 1.4; }
+.student-identity-card > p { margin: 0; padding: 12px 21px; display: flex; align-items: center; gap: 7px; border-top: 1px solid #e7edf4; color: #56718f; background: #f5f9ff; font-size: 10px; line-height: 1.5; }
+.student-identity-card > p svg { flex: 0 0 auto; color: #25825e; }
 .form-grid { gap: 24px 20px; }
 .field { gap: 9px; }
 .field-label { color: #2d3c54; font-size: 12px; font-weight: 760; }
@@ -510,6 +525,18 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .fixed-info > div > svg { padding: 6px; }
   .fixed-info small { font-size: 8px; }.fixed-info b { font-size: 12px; }
   .fixed-info p { font-size: 9px; }
+  .student-identity-card { margin-bottom: 24px; border-radius: 15px; }
+  .student-identity-card > header { padding: 16px; grid-template-columns: 46px 1fr; gap: 11px; }
+  .student-identity-avatar { width: 46px; height: 46px; border-radius: 13px; }
+  .student-identity-card header h3 { font-size: 17px; }
+  .student-identity-card header p { font-size: 10px; }
+  .student-identity-card header > b { grid-column: span 2; width: fit-content; padding: 7px 10px; }
+  .student-identity-grid { padding: 14px 16px; grid-template-columns: 1fr 1fr; gap: 9px; }
+  .student-identity-grid > div { min-height: 58px; padding: 11px 12px; }
+  .student-identity-grid > div.wide { grid-column: span 2; }
+  .student-identity-grid small { font-size: 9px; }
+  .student-identity-grid b { font-size: 12px; }
+  .student-identity-card > p { padding: 11px 16px; font-size: 10px; }
   .form-grid { grid-template-columns: 1fr; gap: 20px; }
   .field.span-2 { grid-column: auto; }
   .field input, .field select, .field textarea { min-height: 50px; font-size: 13px; }

@@ -22,7 +22,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
-import { CLASS_ROSTER } from '@/lib/class-roster';
+import { CLASS_ROSTER, ClassStudent, normalizeVietnameseName, studentAccountEmail } from '@/lib/class-roster';
 import { FIXED_CLASS, FIXED_SCHOOL_YEAR, FIXED_TEACHER, StudentProfile, emptyProfile, profileCompletion, requiredProfileFields } from '@/lib/types';
 import { Field, Modal, Notice } from './ui';
 import ProfileView from './profile-view';
@@ -38,8 +38,39 @@ function SelectYesNo({ value, onChange }: { value: string; onChange: (value: str
   return <select value={value} onChange={(e) => onChange(e.target.value)}><option>Không</option><option>Có</option></select>;
 }
 
+function findAccountStudent(user: User, initialProfile: StudentProfile | null) {
+  const email = user.email?.trim().toLowerCase() || '';
+  const byEmail = CLASS_ROSTER.find((student) => studentAccountEmail(student) === email);
+  if (byEmail) return byEmail;
+
+  const accountName = normalizeVietnameseName(user.displayName || initialProfile?.fullName || '');
+  return accountName
+    ? CLASS_ROSTER.find((student) => normalizeVietnameseName(student.fullName) === accountName)
+    : undefined;
+}
+
+function applyOfficialStudent(profile: StudentProfile, student?: ClassStudent): StudentProfile {
+  if (!student) return profile;
+  return {
+    ...profile,
+    rosterNumber: String(student.no),
+    fullName: student.fullName,
+    birthDate: student.birthDateISO,
+    gender: student.gender,
+    ethnic: student.ethnic,
+    formerSchool: student.formerSchool,
+    className: student.className,
+    schoolYear: FIXED_SCHOOL_YEAR,
+    teacherName: FIXED_TEACHER,
+  };
+}
+
 export default function StudentPortal({ user, initialProfile, onLogout }: { user: User; initialProfile: StudentProfile | null; onLogout: () => void }) {
-  const [profile, setProfile] = useState<StudentProfile>(initialProfile || emptyProfile(user.uid, user.email || '', user.displayName || ''));
+  const accountStudent = findAccountStudent(user, initialProfile);
+  const [profile, setProfile] = useState<StudentProfile>(() => applyOfficialStudent(
+    initialProfile || emptyProfile(user.uid, user.email || '', user.displayName || ''),
+    accountStudent,
+  ));
   const [step, setStep] = useState(initialProfile?.status === 'completed' ? 3 : 0);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -49,22 +80,6 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
 
   const set = (key: keyof StudentProfile, value: string) => setProfile((current) => ({ ...current, [key]: value }));
   const input = (key: keyof StudentProfile) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => set(key, event.target.value);
-  const chooseStudent = (value: string) => {
-    const rosterStudent = CLASS_ROSTER.find((item) => String(item.no) === value);
-    if (!rosterStudent) {
-      setProfile((current) => ({ ...current, rosterNumber: '', formerSchool: '' }));
-      return;
-    }
-    setProfile((current) => ({
-      ...current,
-      rosterNumber: String(rosterStudent.no),
-      fullName: rosterStudent.fullName,
-      birthDate: rosterStudent.birthDateISO,
-      gender: rosterStudent.gender,
-      ethnic: rosterStudent.ethnic,
-      formerSchool: rosterStudent.formerSchool,
-    }));
-  };
 
   const validate = () => {
     const missing = requiredProfileFields.filter((key) => !String(profile[key] || '').trim());
@@ -80,7 +95,7 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
     try {
       const token = profile.shareToken || crypto.randomUUID().replaceAll('-', '').slice(0, 24);
       const next: StudentProfile = {
-        ...profile,
+        ...applyOfficialStudent(profile, accountStudent),
         ownerId: user.uid,
         email: user.email || profile.email,
         className: FIXED_CLASS,
@@ -159,13 +174,29 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
               <div className="form-page">
                 <div className="form-heading"><span><UserRound size={20} /></span><div><p>BƯỚC 01</p><h1>Thông tin học sinh</h1><small>Cung cấp thông tin cá nhân và địa chỉ liên lạc hiện tại.</small></div></div>
                 <div className="fixed-info"><div><School size={20} /><span><small>Học sinh lớp</small><b>{FIXED_CLASS}</b></span></div><div><Home size={20} /><span><small>Năm học</small><b>{FIXED_SCHOOL_YEAR}</b></span></div><p><ShieldCheck size={15} /> Các thông số này được giáo viên thiết lập cố định.</p></div>
+                {accountStudent ? (
+                  <section className="student-identity-card" aria-label="Thông tin học sinh đang đăng nhập">
+                    <header>
+                      <span className="student-identity-avatar">{accountStudent.fullName.charAt(0)}</span>
+                      <div>
+                        <small>HỌC SINH ĐANG ĐĂNG NHẬP</small>
+                        <h3>{accountStudent.fullName}</h3>
+                        <p>{user.email} · Lớp {FIXED_CLASS}</p>
+                      </div>
+                      <b><BadgeCheck size={17} /> Đã xác thực</b>
+                    </header>
+                    <div className="student-identity-grid">
+                      <div><small>Ngày sinh</small><b>{accountStudent.birthDate}</b></div>
+                      <div><small>Giới tính</small><b>{accountStudent.gender}</b></div>
+                      <div><small>Dân tộc</small><b>{accountStudent.ethnic}</b></div>
+                      <div className="wide"><small>Trường THCS đã học</small><b>{accountStudent.formerSchool}</b></div>
+                    </div>
+                    <p><ShieldCheck size={16} /> Thông tin này được lấy tự động từ tài khoản và không cần chọn lại.</p>
+                  </section>
+                ) : (
+                  <Notice type="error">Không tìm thấy học sinh tương ứng với tài khoản đang đăng nhập. Hãy liên hệ giáo viên chủ nhiệm.</Notice>
+                )}
                 <div className="form-grid">
-                  <Field label="Chọn học sinh trong danh sách lớp 10C3" required className="span-2" hint="Thông tin chính thức sẽ được điền tự động từ danh sách nhà trường."><select value={profile.rosterNumber} onChange={(event) => chooseStudent(event.target.value)}><option value="">— Chọn đúng họ và tên của em —</option>{CLASS_ROSTER.map((item) => <option key={item.no} value={item.no}>{String(item.no).padStart(2, '0')}. {item.fullName}</option>)}</select></Field>
-                  <Field label="Họ và tên" required className="span-2"><input value={profile.fullName} disabled placeholder="Chọn học sinh ở danh sách phía trên" /></Field>
-                  <Field label="Ngày sinh" required><input type="date" value={profile.birthDate} disabled /></Field>
-                  <Field label="Giới tính" required><input value={profile.gender} disabled /></Field>
-                  <Field label="Dân tộc" required><input value={profile.ethnic} disabled /></Field>
-                  <Field label="Trường THCS đã học" className="span-2"><input value={profile.formerSchool} disabled /></Field>
                   <Field label="Nơi sinh" required><input value={profile.birthPlace} onChange={input('birthPlace')} placeholder="Tỉnh/Thành phố" /></Field>
                   <Field label="Hộ khẩu thường trú" required className="span-2"><textarea rows={2} value={profile.householdRegistration} onChange={input('householdRegistration')} placeholder="Số nhà, đường/thôn, xã/phường, tỉnh/thành" /></Field>
                   <Field label="Địa chỉ liên lạc hiện tại" required className="span-2"><textarea rows={2} value={profile.currentAddress} onChange={input('currentAddress')} placeholder="Địa chỉ đang sinh sống" /></Field>
