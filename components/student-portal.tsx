@@ -6,12 +6,15 @@ import { User } from 'firebase/auth';
 import {
   ArrowLeft,
   ArrowRight,
+  BadgeCheck,
+  BookOpenCheck,
   Check,
   CheckCircle2,
   Clipboard,
   Eye,
   Home,
   Link2,
+  LogOut,
   Save,
   School,
   ShieldCheck,
@@ -25,10 +28,10 @@ import { Field, Modal, Notice } from './ui';
 import ProfileView from './profile-view';
 
 const steps = [
-  { label: 'Thông tin học sinh', short: 'Học sinh', icon: UserRound },
-  { label: 'Gia đình & chính sách', short: 'Gia đình', icon: UsersRound },
-  { label: 'Trường học', short: 'Trường học', icon: School },
-  { label: 'Kiểm tra & gửi', short: 'Hoàn tất', icon: CheckCircle2 },
+  { label: 'Thông tin học sinh', short: 'Học sinh', caption: 'Thông tin cá nhân', icon: UserRound },
+  { label: 'Gia đình & chính sách', short: 'Gia đình', caption: 'Người thân & chính sách', icon: UsersRound },
+  { label: 'Thông tin trường học', short: 'Trường học', caption: 'Quá trình học tập', icon: School },
+  { label: 'Kiểm tra & gửi', short: 'Hoàn tất', caption: 'Xác nhận hồ sơ', icon: CheckCircle2 },
 ];
 
 function SelectYesNo({ value, onChange }: { value: string; onChange: (value: string) => void }) {
@@ -119,30 +122,36 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
   return (
     <main className="portal-shell">
       <header className="portal-topbar">
-        <div className="portal-brand"><span>S</span><div><b>Sổ Chủ Nhiệm</b><small>Cổng thông tin học sinh</small></div></div>
-        <div className="topbar-actions"><span className="class-chip">{FIXED_CLASS} · {FIXED_SCHOOL_YEAR}</span><button className="user-chip" onClick={onLogout}><span>{profile.fullName?.charAt(0) || 'H'}</span><b>{profile.fullName || user.displayName || 'Học sinh'}</b><small>Đăng xuất</small></button></div>
+        <div className="portal-brand"><span><BookOpenCheck size={21} /></span><div><b>Sổ Chủ Nhiệm</b><small>Cổng thông tin học sinh</small></div></div>
+        <div className="portal-context"><i /><div><span>Không gian học sinh</span><b>Hoàn thiện hồ sơ đầu năm</b></div></div>
+        <div className="topbar-actions"><span className="class-chip"><School size={15} /> {FIXED_CLASS}<i />{FIXED_SCHOOL_YEAR}</span><button className="user-chip" onClick={onLogout} aria-label="Đăng xuất khỏi tài khoản"><span>{profile.fullName?.charAt(0) || 'H'}</span><b>{profile.fullName || user.displayName || 'Học sinh'}</b><small>Học sinh lớp {FIXED_CLASS}</small><LogOut size={16} /></button></div>
       </header>
 
       <div className="portal-layout student-layout">
         <aside className="student-sidebar">
-          <div className="sidebar-title"><span>Phiếu thông tin</span><b>Hồ sơ học sinh</b></div>
+          <div className="sidebar-title"><span>Phiếu thông tin điện tử</span><b>Hồ sơ học sinh</b><small>Hoàn thành lần lượt 4 bước dưới đây</small></div>
           <nav className="step-nav">
             {steps.map((item, index) => {
               const Icon = item.icon;
-              return <button key={item.label} className={`${step === index ? 'active' : ''} ${step > index || profile.status === 'completed' ? 'done' : ''}`} onClick={() => setStep(index)}><span className="step-number">{step > index || profile.status === 'completed' ? <Check size={15} /> : index + 1}</span><Icon size={18} /><span><b>{item.short}</b><small>{item.label}</small></span></button>;
+              return <button key={item.label} className={`${step === index ? 'active' : ''} ${step > index || profile.status === 'completed' ? 'done' : ''}`} onClick={() => setStep(index)}><span className="step-number">{step > index || profile.status === 'completed' ? <Check size={15} /> : index + 1}</span><Icon size={19} /><span><b>{item.short}</b><small>{item.caption}</small></span></button>;
             })}
           </nav>
-          <div className="completion-card"><div><span>Tiến độ hồ sơ</span><b>{completion}%</b></div><div className="progress"><i style={{ width: `${completion}%` }} /></div><p>{completion === 100 ? 'Bạn đã điền đủ thông tin bắt buộc.' : 'Hoàn thiện các mục có dấu * để gửi hồ sơ.'}</p></div>
+          <div className="completion-card">
+            <div className="completion-summary"><div className="completion-ring" style={{ background: `conic-gradient(#2fb67d ${completion * 3.6}deg, #e4eaf2 0deg)` }}><span>{completion}%</span></div><div><span>Tiến độ hồ sơ</span><b>{completion === 100 ? 'Sẵn sàng gửi' : 'Đang hoàn thiện'}</b></div></div>
+            <div className="progress"><i style={{ width: `${completion}%` }} /></div><p>{completion === 100 ? 'Bạn đã điền đủ thông tin bắt buộc.' : 'Hoàn thiện các mục có dấu * để gửi hồ sơ.'}</p>
+          </div>
+          <div className="sidebar-adviser"><span>{FIXED_TEACHER.split(' ').map((word) => word.charAt(0)).slice(-2).join('')}</span><div><small>Giáo viên chủ nhiệm</small><b>{FIXED_TEACHER}</b></div><BadgeCheck size={18} /></div>
           <div className="security-card"><ShieldCheck size={20} /><div><b>Thông tin được bảo mật</b><p>Chỉ bạn, phụ huynh có liên kết và giáo viên được phân quyền mới có thể xem.</p></div></div>
         </aside>
 
         <section className="form-surface">
+          <div className="form-surface-head"><div><span>HỒ SƠ ĐIỆN TỬ · {FIXED_CLASS}</span><h2>Thông tin đầu năm học</h2><p>Mọi thay đổi đều có thể lưu lại và tiếp tục sau.</p></div><div className="surface-status"><BadgeCheck size={20} /><span><b>Dữ liệu chính thức</b><small>Đối chiếu theo danh sách nhà trường</small></span></div></div>
           <div className="mobile-stepbar"><span>Bước {step + 1} / {steps.length}</span><b>{steps[step].label}</b><div className="progress"><i style={{ width: `${((step + 1) / steps.length) * 100}%` }} /></div></div>
           <form onSubmit={submit}>
             {step === 0 && (
               <div className="form-page">
                 <div className="form-heading"><span><UserRound size={20} /></span><div><p>BƯỚC 01</p><h1>Thông tin học sinh</h1><small>Cung cấp thông tin cá nhân và địa chỉ liên lạc hiện tại.</small></div></div>
-                <div className="fixed-info"><div><School size={18} /><span><small>Học sinh lớp</small><b>{FIXED_CLASS}</b></span></div><div><Home size={18} /><span><small>Năm học</small><b>{FIXED_SCHOOL_YEAR}</b></span></div><p>Các thông số này được giáo viên thiết lập cố định.</p></div>
+                <div className="fixed-info"><div><School size={20} /><span><small>Học sinh lớp</small><b>{FIXED_CLASS}</b></span></div><div><Home size={20} /><span><small>Năm học</small><b>{FIXED_SCHOOL_YEAR}</b></span></div><p><ShieldCheck size={15} /> Các thông số này được giáo viên thiết lập cố định.</p></div>
                 <div className="form-grid">
                   <Field label="Chọn học sinh trong danh sách lớp 10C3" required className="span-2" hint="Thông tin chính thức sẽ được điền tự động từ danh sách nhà trường."><select value={profile.rosterNumber} onChange={(event) => chooseStudent(event.target.value)}><option value="">— Chọn đúng họ và tên của em —</option>{CLASS_ROSTER.map((item) => <option key={item.no} value={item.no}>{String(item.no).padStart(2, '0')}. {item.fullName}</option>)}</select></Field>
                   <Field label="Họ và tên" required className="span-2"><input value={profile.fullName} disabled placeholder="Chọn học sinh ở danh sách phía trên" /></Field>
