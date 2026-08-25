@@ -255,7 +255,7 @@ export default function TeacherPortal({
             <article><span className="stat-icon blue"><UsersRound /></span><div><small>Tổng số học sinh</small><strong>{CLASS_ROSTER.length}</strong><p>{male} nam · {female} nữ</p></div></article>
             <article><span className="stat-icon green"><CheckCircle2 /></span><div><small>Đã hoàn thành hồ sơ</small><strong>{completed}</strong><p>Đã gửi cho giáo viên</p></div></article>
             <article><span className="stat-icon amber"><Clock3 /></span><div><small>Đang cập nhật</small><strong>{drafts}</strong><p>Đã lưu bản nháp</p></div></article>
-            <article><span className="stat-icon purple"><BarChart3 /></span><div><small>Chưa bắt đầu</small><strong>{notStarted}</strong><p>Cần gửi liên kết đăng ký</p></div></article>
+            <article><span className="stat-icon purple"><BarChart3 /></span><div><small>Chưa bắt đầu</small><strong>{notStarted}</strong><p>Cần gửi thông tin đăng nhập</p></div></article>
           </div>
 
           <section className="roster-insights">
@@ -291,7 +291,7 @@ export default function TeacherPortal({
           </section>
 
           <div className="dashboard-bottom-grid">
-            <article className="activity-card"><header><h3>Tóm tắt hồ sơ trực tuyến</h3><button>{completed + drafts}/{CLASS_ROSTER.length} tài khoản</button></header><div className="activity-item"><span className="green"><CheckCircle2 size={17} /></span><div><b>{completed} học sinh đã gửi hồ sơ hoàn chỉnh</b><small>Dữ liệu sẵn sàng để xuất mẫu cá nhân</small></div></div><div className="activity-item"><span className="amber"><Clock3 size={17} /></span><div><b>{drafts} học sinh đang lưu bản nháp</b><small>Giáo viên có thể theo dõi tiến độ</small></div></div><div className="activity-item"><span className="amber"><UserPlus size={17} /></span><div><b>{notStarted} học sinh chưa bắt đầu</b><small>Gửi liên kết trang chủ để học sinh đăng ký</small></div></div></article>
+            <article className="activity-card"><header><h3>Tóm tắt hồ sơ trực tuyến</h3><button>{completed + drafts}/{CLASS_ROSTER.length} tài khoản</button></header><div className="activity-item"><span className="green"><CheckCircle2 size={17} /></span><div><b>{completed} học sinh đã gửi hồ sơ hoàn chỉnh</b><small>Dữ liệu sẵn sàng để xuất mẫu cá nhân</small></div></div><div className="activity-item"><span className="amber"><Clock3 size={17} /></span><div><b>{drafts} học sinh đang lưu bản nháp</b><small>Giáo viên có thể theo dõi tiến độ</small></div></div><div className="activity-item"><span className="amber"><UserPlus size={17} /></span><div><b>{notStarted} học sinh chưa bắt đầu</b><small>Gửi tài khoản để học sinh đăng nhập</small></div></div></article>
             <article className="share-class-card"><div className="share-class-icon"><Clipboard size={25} /></div><div><h3>Mời học sinh điền hồ sơ</h3><p>Học sinh chọn đúng tên trong danh sách 50 em; họ tên, ngày sinh, giới tính, dân tộc và trường THCS sẽ tự động điền.</p><div><code>{siteOrigin || 'Liên kết website'}</code><button onClick={() => { navigator.clipboard.writeText(window.location.origin); setNotice('Đã sao chép liên kết mời học sinh.'); }}><Clipboard size={16} /> Sao chép</button></div></div></article>
           </div>
           </section>
@@ -377,7 +377,7 @@ export default function TeacherPortal({
             <div className="teacher-settings-grid">
               <article className="settings-card assignment-settings"><header><span className="card-icon blue"><ShieldCheck size={20} /></span><div><small>PHÂN CÔNG HIỆN TẠI</small><h2>Thông tin lớp chủ nhiệm</h2></div><em>Đã xác thực</em></header><div className="assignment-detail"><span>{className}</span><div><label>Giáo viên chủ nhiệm<b>{teacherName}</b></label><label>Năm học<b>{schoolYear}</b></label><label>Sĩ số<b>{CLASS_ROSTER.length} học sinh</b></label></div></div><p><ShieldCheck size={16} /> Tài khoản chỉ được truy cập dữ liệu đúng lớp và năm học đã phân công.</p></article>
 
-              <article className="settings-card invitation-settings"><header><span className="card-icon purple"><UserPlus size={20} /></span><div><small>LIÊN KẾT THAM GIA</small><h2>Mời học sinh khai hồ sơ</h2></div></header><p>Gửi liên kết này cho học sinh lớp {className}. Các em sẽ chọn đúng tên trong danh sách chính thức khi đăng ký.</p><div className="invitation-link"><code>{siteOrigin || 'Đang lấy địa chỉ website...'}</code><button onClick={copyInvitation}><Copy size={17} /> Sao chép</button></div><small className="settings-hint">Liên kết sử dụng được trên điện thoại và máy tính.</small></article>
+              <article className="settings-card invitation-settings"><header><span className="card-icon purple"><UserPlus size={20} /></span><div><small>LIÊN KẾT THAM GIA</small><h2>Mời học sinh khai hồ sơ</h2></div></header><p>Gửi liên kết này cùng tài khoản đã cấp cho học sinh lớp {className}. Các em chỉ cần đăng nhập để khai hồ sơ.</p><div className="invitation-link"><code>{siteOrigin || 'Đang lấy địa chỉ website...'}</code><button onClick={copyInvitation}><Copy size={17} /> Sao chép</button></div><small className="settings-hint">Liên kết sử dụng được trên điện thoại và máy tính.</small></article>
 
               <article className="settings-card notification-settings"><header><span className="card-icon amber"><Bell size={20} /></span><div><small>THÔNG BÁO</small><h2>Tùy chọn theo dõi hồ sơ</h2></div></header><div className="settings-toggle-list"><label><span><b>Hồ sơ hoàn thành</b><small>Thông báo khi học sinh gửi đủ dữ liệu</small></span><button role="switch" aria-checked={preferences.completed} className={preferences.completed ? 'active' : ''} onClick={() => setPreferences((value) => ({ ...value, completed: !value.completed }))}><i /></button></label><label><span><b>Bản nháp mới</b><small>Theo dõi học sinh đang cập nhật hồ sơ</small></span><button role="switch" aria-checked={preferences.drafts} className={preferences.drafts ? 'active' : ''} onClick={() => setPreferences((value) => ({ ...value, drafts: !value.drafts }))}><i /></button></label><label><span><b>Tóm tắt hằng tuần</b><small>Hiển thị nhắc việc theo tiến độ của lớp</small></span><button role="switch" aria-checked={preferences.weekly} className={preferences.weekly ? 'active' : ''} onClick={() => setPreferences((value) => ({ ...value, weekly: !value.weekly }))}><i /></button></label></div></article>
 
@@ -404,7 +404,7 @@ export default function TeacherPortal({
               <ProfileView profile={selected.profile} />
             </>
           ) : (
-            <div className="profile-empty-state"><Clock3 size={28} /><h3>Chưa có hồ sơ trực tuyến</h3><p>Học sinh này có trong danh sách chính thức nhưng chưa đăng ký hoặc chưa chọn đúng tên trong biểu mẫu.</p></div>
+            <div className="profile-empty-state"><Clock3 size={28} /><h3>Chưa có hồ sơ trực tuyến</h3><p>Học sinh này có trong danh sách chính thức nhưng chưa đăng nhập hoặc chưa chọn đúng tên trong biểu mẫu.</p></div>
           )}
         </Modal>
       )}

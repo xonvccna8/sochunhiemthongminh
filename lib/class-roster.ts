@@ -86,3 +86,12 @@ export function normalizeVietnameseName(value: string) {
     .trim()
     .toLowerCase();
 }
+
+export function studentAccountEmail(student: ClassStudent) {
+  const localPart = normalizeVietnameseName(student.fullName).replace(/[^a-z0-9]/g, '');
+  return `${localPart}@gmail.com`;
+}
+
+export function studentAccountPassword(student: ClassStudent) {
+  return student.birthDate.replaceAll('/', '');
+}

@@ -83,14 +83,14 @@ function Landing({ onLogin }: { onLogin: () => void }) {
       </section>
 
       <section id="quy-trinh" className="workflow-section section-pad"><div className="container workflow-grid"><div><div className="section-heading"><span>QUY TRÌNH ĐƠN GIẢN</span><h2>Hoàn tất hồ sơ chỉ trong vài phút</h2><p>Mọi thao tác đều rõ ràng, không cần cài ứng dụng và dùng tốt trên điện thoại.</p></div><div className="workflow-list">{[
-              ['01', 'Đăng ký tài khoản', 'Học sinh dùng email để tạo tài khoản cá nhân.'],
+              ['01', 'Nhận tài khoản lớp', 'Học sinh dùng email và mật khẩu do giáo viên chủ nhiệm cấp.'],
               ['02', 'Điền và kiểm tra hồ sơ', 'Hoàn thiện thông tin theo đúng mẫu của lớp.'],
               ['03', 'Gửi & chia sẻ', 'Giáo viên nhận dữ liệu, phụ huynh xem qua liên kết riêng.'],
             ].map(([number, title, text]) => <div key={number}><span>{number}</span><div><h3>{title}</h3><p>{text}</p></div></div>)}</div><button className="workflow-button" onClick={onLogin}>Bắt đầu ngay <ArrowRight size={17} /></button></div><div className="form-preview"><div className="form-preview-top"><span><FileCheck2 /></span><div><small>PHIẾU THÔNG TIN</small><b>Hồ sơ học sinh</b></div><em>75%</em></div><div className="preview-progress"><i /></div><div className="preview-fields"><label>Họ và tên <span>Nguyễn Minh Anh</span></label><div><label>Học sinh lớp <b>10C3</b></label><label>Năm học <b>2026 – 2027</b></label></div><label>Địa chỉ liên lạc <span>Phường Hòa Cường, TP. Đà Nẵng</span></label><label>Giáo viên chủ nhiệm <b>Nguyễn Văn Xô</b></label></div><button>Tiếp tục <ArrowRight size={16} /></button></div></div></section>
 
       <section id="bao-mat" className="security-section"><div className="container security-inner"><div className="security-icon"><LockKeyhole /></div><div><span>BẢO MẬT &amp; PHÂN QUYỀN</span><h2>Thông tin học sinh được sử dụng đúng người, đúng mục đích.</h2><p>Tài khoản học sinh chỉ chỉnh sửa hồ sơ của mình. Tài khoản giáo viên được nhà trường cấp quyền để quản lý toàn lớp. Liên kết phụ huynh sử dụng mã riêng khó đoán.</p></div><div className="security-points"><span><ShieldCheck /> Firebase Authentication</span><span><LockKeyhole /> Quy tắc Firestore</span><span><FileCheck2 /> Lịch sử cập nhật</span></div></div></section>
 
-      <section className="cta-section"><div className="container"><div><span>SẴN SÀNG BẮT ĐẦU?</span><h2>Hoàn thiện hồ sơ lớp 10C3 ngay hôm nay.</h2><p>Năm học 2026 – 2027 · Giáo viên chủ nhiệm Nguyễn Văn Xô</p></div><button onClick={onLogin}>Đăng nhập / Đăng ký <ArrowRight size={18} /></button></div></section>
+      <section className="cta-section"><div className="container"><div><span>SẴN SÀNG BẮT ĐẦU?</span><h2>Hoàn thiện hồ sơ lớp 10C3 ngay hôm nay.</h2><p>Năm học 2026 – 2027 · Giáo viên chủ nhiệm Nguyễn Văn Xô</p></div><button onClick={onLogin}>Đăng nhập / Tài khoản học sinh <ArrowRight size={18} /></button></div></section>
       <footer className="landing-footer"><div className="container"><Logo /><p>Hệ thống quản lý hồ sơ học sinh trực tuyến dành cho lớp 10C3.</p><span>© 2026 Sổ Chủ Nhiệm Online</span></div></footer>
     </main>
   );
