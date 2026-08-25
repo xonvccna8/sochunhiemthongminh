@@ -143,8 +143,17 @@ service cloud.firestore {
     match /users/{userId} {
       allow get: if isOwner(userId) || isPharmacist();
       allow list: if isPharmacist() || signedIn();
-      allow create: if isOwner(userId) || signedIn();
-      allow update: if isOwner(userId) || isPharmacist();
+      // Các role đặc quyền chỉ được cấp từ Firebase Console hoặc Admin SDK.
+      allow create: if isOwner(userId)
+        && !(request.resource.data.get('role', 'student')
+          in ['teacher', 'pharmacist', 'admin']);
+      allow update: if isPharmacist()
+        || (
+          isOwner(userId)
+          && request.resource.data.get('role', '') == resource.data.get('role', '')
+          && request.resource.data.get('className', '') == resource.data.get('className', '')
+          && request.resource.data.get('schoolYear', '') == resource.data.get('schoolYear', '')
+        );
       allow delete: if isPharmacist();
     }
 
