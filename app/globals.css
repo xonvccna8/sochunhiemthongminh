@@ -436,27 +436,32 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .share-box input, .share-box button { font-size: 10px; }
 
 /* Teacher workspace readability */
-.teacher-shell { grid-template-columns: 260px 1fr; background: linear-gradient(135deg, #f5f8fc, #eef3f9); }
+.teacher-shell { grid-template-columns: 280px 1fr; background: linear-gradient(135deg, #f5f8fc, #eef3f9); }
 .teacher-sidebar { padding: 25px 18px 18px; background: linear-gradient(180deg, #0d2342, #102b4e 65%, #0d233e); }
-.teacher-logo b { font-size: 14px; }.teacher-logo small { font-size: 9px; }
-.school-card { padding: 16px; border-radius: 14px; }.school-card small { font-size: 8px; }.school-card b { font-size: 15px; }.school-card span { font-size: 10px; }
-.teacher-sidebar nav button { height: 44px; border-radius: 10px; font-size: 11px; }
-.teacher-sidebar nav p { font-size: 8px; }
-.teacher-help b, .sidebar-logout { font-size: 10px; }.teacher-help p { font-size: 9px; }
+.teacher-logo b { font-size: 17px; }.teacher-logo small { font-size: 11px; }
+.school-card { padding: 18px; border-radius: 14px; }.school-card small { font-size: 10px; }.school-card b { font-size: 19px; }.school-card span { font-size: 12px; }
+.teacher-sidebar nav button { height: 48px; border-radius: 10px; font-size: 14px; }
+.teacher-sidebar nav button span { font-size: 10px; }
+.teacher-sidebar nav p { font-size: 10px; }
+.teacher-help b, .sidebar-logout { font-size: 13px; }.teacher-help p { font-size: 11px; }
 .teacher-topbar { height: 74px; padding: 0 32px; box-shadow: 0 8px 30px rgba(23,45,78,.035); }
+.global-search { width: 390px; height: 43px; }.global-search input { font-size: 12px; }.global-search kbd { font-size: 9px; }
+.teacher-avatar { font-size: 14px; }.teacher-account b { font-size: 12px; }.teacher-account small { font-size: 10px; }
 .teacher-content { padding: 32px; }
-.teacher-heading h1 { font-size: 28px; }.teacher-heading > div > span { font-size: 11px; }
-.heading-actions button { height: 42px; padding: 0 15px; border-radius: 10px; font-size: 11px; }
+.teacher-heading .eyebrow { font-size: 12px; }.teacher-heading h1 { font-size: 34px; }.teacher-heading > div > span { font-size: 14px; }
+.heading-actions button { height: 46px; padding: 0 17px; border-radius: 10px; font-size: 13px; }
 .stat-grid { gap: 15px; }.stat-grid article { padding: 20px; border-radius: 15px; box-shadow: 0 9px 24px rgba(27,51,84,.045); }
-.stat-grid small { font-size: 10px; }.stat-grid strong { font-size: 25px; }.stat-grid p { font-size: 9px; }
+.stat-grid small { font-size: 13px; }.stat-grid strong { font-size: 30px; }.stat-grid p { font-size: 11px; }
 .student-table-card { border-radius: 16px; box-shadow: 0 12px 28px rgba(27,51,84,.045); }
-.student-table-card > header h2 { font-size: 15px; }.student-table-card > header p { font-size: 9px; }
-.student-table-card th { font-size: 8px; }.student-table-card td { font-size: 10px; }
-.student-cell b, .phone-text, .date-text, .ethnic-text, .former-school { font-size: 10px; }
-.student-cell small, .student-table-card td > small { font-size: 8px; }
-.status-pill, .gender-pill { font-size: 8px; }
-.student-table-card > footer, .student-table-card > footer button { font-size: 9px; }
-.roster-insights span { font-size: 9px; }.roster-insights b { font-size: 10px; }
+.student-table-card > header { min-height: 82px; }.student-table-card > header h2 { font-size: 19px; }.student-table-card > header p { font-size: 12px; }
+.table-search { height: 40px; }.table-search input, .table-tools select { font-size: 12px; }.table-tools select { height: 40px; }
+.student-table-card table { min-width: 1120px; }.student-table-card th { height: 45px; font-size: 11px; }.student-table-card td { height: 68px; font-size: 13px; }
+.student-cell > span { width: 38px; height: 38px; font-size: 13px; }.student-cell b, .phone-text, .date-text, .ethnic-text, .former-school { font-size: 13px; }
+.student-cell small, .student-table-card td > small { font-size: 10px; }
+.status-pill, .gender-pill { font-size: 11px; }
+.student-table-card > footer, .student-table-card > footer button { font-size: 11px; }
+.student-table-card > footer button { height: 35px; }
+.roster-insights span { font-size: 11px; }.roster-insights b { font-size: 12px; }
 
 @media (max-width: 1180px) {
   .portal-context { display: none; }
@@ -465,7 +470,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .form-surface { padding-inline: 30px; }
   .fixed-info { grid-template-columns: 1fr 1fr; }
   .fixed-info p { grid-column: span 2; max-width: none; }
-  .teacher-shell { grid-template-columns: 225px 1fr; }
+  .teacher-shell { grid-template-columns: 245px 1fr; }
 }
 
 @media (max-width: 860px) {
@@ -477,6 +482,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .mobile-stepbar b { font-size: 14px; }
   .mobile-stepbar .progress { height: 6px; margin-top: 10px; }
   .teacher-shell { grid-template-columns: 1fr; }
+  .teacher-sidebar { left: -300px; width: 280px; }
 }
 
 @media (max-width: 640px) {
@@ -513,6 +519,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .review-summary { grid-template-columns: 62px 1fr; padding: 18px; }
   .review-score { width: 62px; height: 62px; }
   .teacher-content { padding: 20px 12px 40px; }
+  .teacher-heading h1 { font-size: 29px; }
+  .teacher-heading > div > span { font-size: 13px; }
+  .heading-actions button { font-size: 12px; }
+  .stat-grid small { font-size: 11px; }
+  .stat-grid strong { font-size: 26px; }
+  .stat-grid p { font-size: 10px; }
 }
 
 /* Colorful, step-aware student experience */
