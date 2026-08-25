@@ -133,7 +133,7 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
           <nav className="step-nav">
             {steps.map((item, index) => {
               const Icon = item.icon;
-              return <button key={item.label} className={`${step === index ? 'active' : ''} ${step > index || profile.status === 'completed' ? 'done' : ''}`} onClick={() => setStep(index)}><span className="step-number">{step > index || profile.status === 'completed' ? <Check size={15} /> : index + 1}</span><Icon size={19} /><span><b>{item.short}</b><small>{item.caption}</small></span></button>;
+              return <button key={item.label} data-step={index} className={`${step === index ? 'active' : ''} ${step > index || profile.status === 'completed' ? 'done' : ''}`} onClick={() => setStep(index)}><span className="step-number">{step > index || profile.status === 'completed' ? <Check size={15} /> : index + 1}</span><Icon size={19} /><span><b>{item.short}</b><small>{item.caption}</small></span></button>;
             })}
           </nav>
           <div className="completion-card">
@@ -144,9 +144,16 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
           <div className="security-card"><ShieldCheck size={20} /><div><b>Thông tin được bảo mật</b><p>Chỉ bạn, phụ huynh có liên kết và giáo viên được phân quyền mới có thể xem.</p></div></div>
         </aside>
 
-        <section className="form-surface">
+        <section className={`form-surface step-theme-${step}`}>
           <div className="form-surface-head"><div><span>HỒ SƠ ĐIỆN TỬ · {FIXED_CLASS}</span><h2>Thông tin đầu năm học</h2><p>Mọi thay đổi đều có thể lưu lại và tiếp tục sau.</p></div><div className="surface-status"><BadgeCheck size={20} /><span><b>Dữ liệu chính thức</b><small>Đối chiếu theo danh sách nhà trường</small></span></div></div>
-          <div className="mobile-stepbar"><span>Bước {step + 1} / {steps.length}</span><b>{steps[step].label}</b><div className="progress"><i style={{ width: `${((step + 1) / steps.length) * 100}%` }} /></div></div>
+          <div className="mobile-stepbar">
+            <div className="mobile-stepbar-head"><span>BƯỚC {String(step + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')}</span><em>{completion}% hồ sơ</em></div>
+            <b>{steps[step].label}</b>
+            <nav className="mobile-step-dots" aria-label="Các bước hoàn thiện hồ sơ">
+              {steps.map((item, index) => <button key={item.short} type="button" className={`${step === index ? 'active' : ''} ${step > index || profile.status === 'completed' ? 'done' : ''}`} onClick={() => setStep(index)} aria-label={`Bước ${index + 1}: ${item.label}`}><span>{step > index || profile.status === 'completed' ? <Check size={13} /> : index + 1}</span><small>{item.short}</small></button>)}
+            </nav>
+            <div className="progress"><i style={{ width: `${((step + 1) / steps.length) * 100}%` }} /></div>
+          </div>
           <form onSubmit={submit}>
             {step === 0 && (
               <div className="form-page">
