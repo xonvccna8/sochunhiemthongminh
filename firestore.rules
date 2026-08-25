@@ -6,17 +6,40 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function teacher() {
-      return signedIn()
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
     }
 
-    function ownsProfile() {
+    function hasUserProfile() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function userRole() {
+      return get(
+        /databases/$(database)/documents/users/$(request.auth.uid)
+      ).data.role;
+    }
+
+    function isPharmacist() {
+      return hasUserProfile() && userRole() == 'pharmacist';
+    }
+
+    // Giữ nguyên hành vi hiện tại cho các phần dữ liệu cũ.
+    function isTeacher() {
+      return signedIn();
+    }
+
+    // Giáo viên của ứng dụng Sổ Chủ Nhiệm phải có role = teacher.
+    function isHomeroomTeacher() {
+      return hasUserProfile() && userRole() == 'teacher';
+    }
+
+    function ownsHomeroomProfile() {
       return signedIn() && request.auth.uid == resource.data.ownerId;
     }
 
-    function writesOwnFixedProfile() {
+    function writesOwnFixedHomeroomProfile() {
       return signedIn()
         && request.auth.uid == request.resource.data.ownerId
         && request.resource.data.className == '10C3'
@@ -24,35 +47,236 @@ service cloud.firestore {
         && request.resource.data.teacherName == 'Nguyễn Văn Xô';
     }
 
-    match /users/{userId} {
-      allow get: if signedIn() && (request.auth.uid == userId || teacher());
-      allow list: if teacher();
-      allow create: if signedIn()
-        && request.auth.uid == userId
-        && request.resource.data.role == 'student';
-      allow update: if teacher()
-        || (signedIn()
-          && request.auth.uid == userId
-          && request.resource.data.role == resource.data.role);
-      allow delete: if false;
+    function hasSchoolProfile(schoolId) {
+      return signedIn()
+        && exists(
+          /databases/$(database)/documents/schools/$(schoolId)/users/$(request.auth.uid)
+        );
     }
 
+    function belongsToSchool(schoolId) {
+      return signedIn()
+        && (
+          (
+            request.auth.token.keys().hasAll(['schoolId'])
+            && request.auth.token.schoolId == schoolId
+          )
+          || (
+            hasSchoolProfile(schoolId)
+            && get(
+              /databases/$(database)/documents/schools/$(schoolId)/users/$(request.auth.uid)
+            ).data.get('schoolId', schoolId) == schoolId
+          )
+        );
+    }
+
+    function isSchoolTeacherOrAdmin(schoolId) {
+      return belongsToSchool(schoolId)
+        && (
+          (
+            request.auth.token.keys().hasAll(['role'])
+            && request.auth.token.role in ['teacher', 'admin']
+          )
+          || (
+            hasSchoolProfile(schoolId)
+            && get(
+              /databases/$(database)/documents/schools/$(schoolId)/users/$(request.auth.uid)
+            ).data.get('role', '') in ['teacher', 'admin']
+          )
+        );
+    }
+
+    function isStudentForSchool(schoolId) {
+      return belongsToSchool(schoolId)
+        && (
+          (
+            request.auth.token.keys().hasAll(['role'])
+            && request.auth.token.role == 'student'
+          )
+          || (
+            hasSchoolProfile(schoolId)
+            && get(
+              /databases/$(database)/documents/schools/$(schoolId)/users/$(request.auth.uid)
+            ).data.get('role', '') == 'student'
+          )
+        );
+    }
+
+    function isLinkedToStudent(schoolId, studentId) {
+      return belongsToSchool(schoolId)
+        && (
+          (
+            request.auth.token.keys().hasAll(['linkedStudentIds'])
+            && studentId in request.auth.token.linkedStudentIds
+          )
+          || (
+            hasSchoolProfile(schoolId)
+            && get(
+              /databases/$(database)/documents/schools/$(schoolId)/users/$(request.auth.uid)
+            ).data.keys().hasAll(['linkedStudentIds'])
+            && studentId in get(
+              /databases/$(database)/documents/schools/$(schoolId)/users/$(request.auth.uid)
+            ).data.linkedStudentIds
+          )
+        );
+    }
+
+    // ===== 1. Ứng dụng Nhà thuốc =====
+    match /users/{userId} {
+      allow get: if isOwner(userId) || isPharmacist();
+      allow list: if isPharmacist() || signedIn();
+      allow create: if isOwner(userId) || signedIn();
+      allow update: if isOwner(userId) || isPharmacist();
+      allow delete: if isPharmacist();
+    }
+
+    match /medicines/{medicineId} {
+      allow read: if signedIn();
+      allow write: if isPharmacist();
+    }
+
+    match /stockTransactions/{transactionId} {
+      allow read, create: if isPharmacist();
+      allow update, delete: if false;
+    }
+
+    match /prescriptions/{prescriptionId} {
+      allow create: if signedIn()
+        && (
+          isPharmacist()
+          || request.resource.data.patientId == request.auth.uid
+        );
+
+      allow read: if signedIn()
+        && (
+          isPharmacist()
+          || resource.data.patientId == request.auth.uid
+          || resource.data.doctorId == request.auth.uid
+        );
+
+      allow update, delete: if isPharmacist();
+    }
+
+    // ===== 2. Ứng dụng Giám Hộ Số: dữ liệu thư mục gốc =====
+    match /students/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    match /attendance/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    match /attendanceSessions/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    match /menus/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    match /alerts/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    match /faceProfiles/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    match /careNotes/{docId} {
+      allow read, write: if signedIn();
+    }
+
+    // ===== 3. Hồ sơ tài khoản trong trường =====
+    match /schools/{schoolId}/users/{uid} {
+      allow read, write: if signedIn();
+    }
+
+    // ===== 4. Báo cáo sức khỏe do học sinh gửi =====
+    match /schools/{schoolId}/healthIncidents/{incidentId} {
+      allow read: if signedIn();
+
+      allow create: if isSchoolTeacherOrAdmin(schoolId)
+        || (
+          isStudentForSchool(schoolId)
+          && request.resource.data.keys().hasOnly([
+            'id', 'studentId', 'studentName', 'className', 'roomNumber',
+            'category', 'severity', 'symptoms', 'actionTaken',
+            'guardianNotified', 'status', 'occurredAt', 'followUpAt',
+            'createdAt', 'updatedAt', 'createdByUid', 'createdByName',
+            'createdByRole', 'source', 'requiresTeacherReview',
+            'serverRecordedAt'
+          ])
+          && request.resource.data.id == incidentId
+          && isLinkedToStudent(schoolId, request.resource.data.studentId)
+          && exists(
+            /databases/$(database)/documents/schools/$(schoolId)/students/$(request.resource.data.studentId)
+          )
+          && request.resource.data.studentName == get(
+            /databases/$(database)/documents/schools/$(schoolId)/students/$(request.resource.data.studentId)
+          ).data.get('name', '')
+          && request.resource.data.className == get(
+            /databases/$(database)/documents/schools/$(schoolId)/students/$(request.resource.data.studentId)
+          ).data.get('className', '')
+          && request.resource.data.roomNumber == get(
+            /databases/$(database)/documents/schools/$(schoolId)/students/$(request.resource.data.studentId)
+          ).data.get('roomNumber', '')
+          && request.resource.data.category in [
+            'Sức khỏe', 'Tâm lý', 'Bắt nạt', 'Tai nạn', 'An toàn'
+          ]
+          && request.resource.data.severity in [
+            'LOW', 'MEDIUM', 'HIGH', 'CRITICAL'
+          ]
+          && request.resource.data.symptoms is string
+          && request.resource.data.symptoms.size() >= 5
+          && request.resource.data.symptoms.size() <= 1500
+          && request.resource.data.actionTaken == ''
+          && request.resource.data.guardianNotified == false
+          && request.resource.data.status == 'OPEN'
+          && request.resource.data.followUpAt == 0
+          && request.resource.data.occurredAt is int
+          && request.resource.data.occurredAt == request.resource.data.createdAt
+          && request.resource.data.createdAt == request.resource.data.updatedAt
+          && request.resource.data.createdByUid == request.auth.uid
+          && request.resource.data.createdByName == request.resource.data.studentName
+          && request.resource.data.createdByRole == 'student'
+          && request.resource.data.source == 'student_self_report'
+          && request.resource.data.requiresTeacherReview == true
+          && request.resource.data.serverRecordedAt == request.time
+        );
+
+      allow update, delete: if isSchoolTeacherOrAdmin(schoolId);
+    }
+
+    // Giữ nguyên quyền hiện tại cho các collection trường học khác,
+    // nhưng loại healthIncidents để rule riêng phía trên có hiệu lực.
+    match /schools/{schoolId}/{collectionId}/{document=**} {
+      allow read, write: if signedIn() && collectionId != 'healthIncidents';
+    }
+
+    // ===== 5. Ứng dụng Sổ Chủ Nhiệm Online =====
     match /profiles/{userId} {
-      allow get: if teacher() || (signedIn() && request.auth.uid == userId);
-      allow list: if teacher();
-      allow create, update: if teacher()
-        || (signedIn() && request.auth.uid == userId && writesOwnFixedProfile());
-      allow delete: if teacher();
+      allow get: if isHomeroomTeacher() || isOwner(userId);
+      allow list: if isHomeroomTeacher();
+      allow create, update: if isHomeroomTeacher()
+        || (isOwner(userId) && writesOwnFixedHomeroomProfile());
+      allow delete: if isHomeroomTeacher();
     }
 
     match /publicProfiles/{token} {
       allow get: if true;
       allow list: if false;
-      allow create: if writesOwnFixedProfile();
-      allow update: if teacher() || ownsProfile();
-      allow delete: if teacher() || ownsProfile();
+      allow create: if writesOwnFixedHomeroomProfile()
+        && request.resource.data.shareToken == token;
+      allow update: if isHomeroomTeacher()
+        || (
+          ownsHomeroomProfile()
+          && writesOwnFixedHomeroomProfile()
+          && request.resource.data.shareToken == token
+        );
+      allow delete: if isHomeroomTeacher() || ownsHomeroomProfile();
     }
 
+    // ===== 6. Mặc định: chặn mọi truy cập khác =====
     match /{document=**} {
       allow read, write: if false;
     }
