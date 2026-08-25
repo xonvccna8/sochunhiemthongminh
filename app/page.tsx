@@ -24,7 +24,7 @@ import {
   X,
 } from 'lucide-react';
 import { auth, db } from '@/lib/firebase';
-import { StudentProfile, UserRecord } from '@/lib/types';
+import { FIXED_CLASS, FIXED_SCHOOL_YEAR, FIXED_TEACHER, FIXED_TEACHER_EMAIL, StudentProfile, UserRecord } from '@/lib/types';
 import AuthScreen from '@/components/auth-screen';
 import StudentPortal from '@/components/student-portal';
 import ProfileView from '@/components/profile-view';
@@ -120,6 +120,7 @@ function HomeContent() {
   const [record, setRecord] = useState<UserRecord | null>(null);
   const [profile, setProfile] = useState<StudentProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState('');
   const publicToken = searchParams.get('hoso') || '';
 
   useEffect(() => {
@@ -132,11 +133,27 @@ function HomeContent() {
         return;
       }
       setLoading(true);
+      setAuthError('');
       try {
         const userRef = doc(db, 'users', currentUser.uid);
         const userSnapshot = await getDoc(userRef);
         let nextRecord: UserRecord;
-        if (userSnapshot.exists()) nextRecord = userSnapshot.data() as UserRecord;
+        const isApprovedTeacher = currentUser.email?.trim().toLowerCase() === FIXED_TEACHER_EMAIL;
+        if (isApprovedTeacher) {
+          nextRecord = {
+            uid: currentUser.uid,
+            email: FIXED_TEACHER_EMAIL,
+            displayName: FIXED_TEACHER,
+            role: 'teacher',
+            className: FIXED_CLASS,
+            schoolYear: FIXED_SCHOOL_YEAR,
+          };
+          await setDoc(userRef, {
+            ...nextRecord,
+            ...(!userSnapshot.exists() ? { createdAt: serverTimestamp() } : {}),
+            updatedAt: serverTimestamp(),
+          }, { merge: true });
+        } else if (userSnapshot.exists()) nextRecord = userSnapshot.data() as UserRecord;
         else {
           nextRecord = { uid: currentUser.uid, email: currentUser.email || '', displayName: currentUser.displayName || 'Học sinh', role: 'student' };
           await setDoc(userRef, { ...nextRecord, createdAt: serverTimestamp() });
@@ -146,6 +163,13 @@ function HomeContent() {
           const profileSnapshot = await getDoc(doc(db, 'profiles', currentUser.uid));
           setProfile(profileSnapshot.exists() ? profileSnapshot.data() as StudentProfile : null);
         }
+      } catch (error) {
+        console.error('Không thể khởi tạo hồ sơ tài khoản:', error);
+        setRecord(null);
+        setProfile(null);
+        setAuthError('Chưa thể tự cấp quyền giáo viên. Vui lòng xuất bản Firestore Rules mới rồi đăng nhập lại.');
+        await signOut(auth);
+        setScreen('auth');
       } finally {
         setLoading(false);
       }
@@ -166,7 +190,7 @@ function HomeContent() {
   if (loading) return <Spinner />;
   if (user && record?.role === 'teacher') return <Spinner label="Đang mở trang quản lý giáo viên..." />;
   if (user && record?.role === 'student') return <StudentPortal user={user} initialProfile={profile} onLogout={logout} />;
-  if (screen === 'auth') return <AuthScreen onBack={() => setScreen('landing')} />;
+  if (screen === 'auth') return <AuthScreen onBack={() => setScreen('landing')} systemError={authError} />;
   return <Landing onLogin={() => setScreen('auth')} />;
 }
 

@@ -10,6 +10,23 @@ service cloud.firestore {
       return signedIn() && request.auth.uid == userId;
     }
 
+    // Tài khoản giáo viên chủ nhiệm đã được nhà trường duyệt trước.
+    function isPrimaryHomeroomTeacherAccount() {
+      return signedIn()
+        && request.auth.token.keys().hasAll(['email'])
+        && request.auth.token.email == 'gvxo@gmail.com';
+    }
+
+    function writesPrimaryHomeroomTeacherAccount(userId) {
+      return isOwner(userId)
+        && isPrimaryHomeroomTeacherAccount()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == 'gvxo@gmail.com'
+        && request.resource.data.role == 'teacher'
+        && request.resource.data.className == '10C3'
+        && request.resource.data.schoolYear == '2026 - 2027';
+    }
+
     function hasUserProfile() {
       return signedIn()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid));
@@ -143,17 +160,20 @@ service cloud.firestore {
     match /users/{userId} {
       allow get: if isOwner(userId) || isPharmacist();
       allow list: if isPharmacist() || signedIn();
-      // Các role đặc quyền chỉ được cấp từ Firebase Console hoặc Admin SDK.
-      allow create: if isOwner(userId)
-        && !(request.resource.data.get('role', 'student')
-          in ['teacher', 'pharmacist', 'admin']);
+      // Role đặc quyền chỉ do quản trị viên cấp, ngoại trừ email GVCN đã duyệt.
+      allow create: if (
+          isOwner(userId)
+          && !(request.resource.data.get('role', 'student')
+            in ['teacher', 'pharmacist', 'admin'])
+        ) || writesPrimaryHomeroomTeacherAccount(userId);
       allow update: if isPharmacist()
         || (
           isOwner(userId)
           && request.resource.data.get('role', '') == resource.data.get('role', '')
           && request.resource.data.get('className', '') == resource.data.get('className', '')
           && request.resource.data.get('schoolYear', '') == resource.data.get('schoolYear', '')
-        );
+        )
+        || writesPrimaryHomeroomTeacherAccount(userId);
       allow delete: if isPharmacist();
     }
 

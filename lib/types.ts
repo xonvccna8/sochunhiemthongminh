@@ -53,6 +53,7 @@ export type StudentProfile = {
 export const FIXED_CLASS = '10C3';
 export const FIXED_SCHOOL_YEAR = '2026 - 2027';
 export const FIXED_TEACHER = 'Nguyễn Văn Xô';
+export const FIXED_TEACHER_EMAIL = 'gvxo@gmail.com';
 
 export const emptyProfile = (ownerId = '', email = '', fullName = ''): StudentProfile => ({
   ownerId,

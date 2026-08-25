@@ -11,6 +11,7 @@ import {
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { ArrowRight, Eye, EyeOff, GraduationCap, LockKeyhole, Mail, ShieldCheck, UserRound } from 'lucide-react';
 import { auth, db } from '@/lib/firebase';
+import { FIXED_TEACHER_EMAIL } from '@/lib/types';
 import { Notice } from './ui';
 
 function readableAuthError(error: unknown) {
@@ -25,7 +26,7 @@ function readableAuthError(error: unknown) {
   return 'Không thể kết nối tài khoản. Vui lòng kiểm tra Firebase và thử lại.';
 }
 
-export default function AuthScreen({ onBack }: { onBack: () => void }) {
+export default function AuthScreen({ onBack, systemError = '' }: { onBack: () => void; systemError?: string }) {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [accountType, setAccountType] = useState<'student' | 'teacher'>('student');
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +36,15 @@ export default function AuthScreen({ onBack }: { onBack: () => void }) {
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const visibleMessage = message ?? (systemError ? { type: 'error' as const, text: systemError } : null);
+
+  const updateEmail = (value: string) => {
+    setEmail(value);
+    if (mode === 'login' && value.trim().toLowerCase() === FIXED_TEACHER_EMAIL) {
+      setAccountType('teacher');
+      setMessage(null);
+    }
+  };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
@@ -56,7 +66,8 @@ export default function AuthScreen({ onBack }: { onBack: () => void }) {
       } else {
         const credential = await signInWithEmailAndPassword(auth, email.trim(), password);
         const userSnapshot = await getDoc(doc(db, 'users', credential.user.uid));
-        const actualRole = userSnapshot.exists() ? userSnapshot.data().role : 'student';
+        const isApprovedTeacher = credential.user.email?.trim().toLowerCase() === FIXED_TEACHER_EMAIL;
+        const actualRole = isApprovedTeacher ? 'teacher' : userSnapshot.exists() ? userSnapshot.data().role : 'student';
         if (actualRole !== accountType) {
           await signOut(auth);
           throw new Error('role-mismatch');
@@ -127,7 +138,7 @@ export default function AuthScreen({ onBack }: { onBack: () => void }) {
               <span><ShieldCheck size={27} /></span>
               <h3>Giáo viên không tự đăng ký</h3>
               <p>Để bảo vệ dữ liệu học sinh, tài khoản giáo viên phải được quản trị viên tạo và gán đúng lớp phụ trách.</p>
-              {message && <Notice type={message.type}>{message.text}</Notice>}
+              {visibleMessage && <Notice type={visibleMessage.type}>{visibleMessage.text}</Notice>}
               <button type="button" onClick={() => { setMode('login'); setMessage(null); }}>Đăng nhập tài khoản giáo viên <ArrowRight size={17} /></button>
             </div>
           ) : <form onSubmit={submit} className="auth-form">
@@ -139,7 +150,7 @@ export default function AuthScreen({ onBack }: { onBack: () => void }) {
             )}
             <label>
               <span>Email</span>
-              <div className="auth-input"><Mail size={18} /><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={accountType === 'teacher' ? 'giaovien@truong.edu.vn' : 'hocsinh@email.com'} autoComplete="email" required /></div>
+              <div className="auth-input"><Mail size={18} /><input type="email" value={email} onChange={(e) => updateEmail(e.target.value)} placeholder={accountType === 'teacher' ? 'giaovien@truong.edu.vn' : 'hocsinh@email.com'} autoComplete="email" required /></div>
             </label>
             <label>
               <span>Mật khẩu</span>
@@ -150,7 +161,7 @@ export default function AuthScreen({ onBack }: { onBack: () => void }) {
             ) : (
               <div className="account-note"><ShieldCheck size={17} /><span>Tài khoản giáo viên do nhà trường cấp và phân quyền riêng.</span></div>
             )}
-            {message && <Notice type={message.type}>{message.text}</Notice>}
+            {visibleMessage && <Notice type={visibleMessage.type}>{visibleMessage.text}</Notice>}
             <button className={`auth-submit ${accountType}`} type="submit" disabled={busy}>{busy ? 'Đang xử lý...' : mode === 'login' ? `Đăng nhập ${accountType === 'teacher' ? 'giáo viên' : 'học sinh'}` : 'Tạo tài khoản học sinh'} <ArrowRight size={18} /></button>
           </form>}
           <p className="auth-privacy">Bằng việc tiếp tục, bạn đồng ý sử dụng thông tin đúng mục đích quản lý giáo dục của lớp.</p>
