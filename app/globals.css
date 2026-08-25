@@ -650,3 +650,45 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .fixed-info { background: linear-gradient(145deg, var(--step-soft), #f8fbff); }
   .form-actions { background: linear-gradient(110deg, rgba(255,255,255,.96), color-mix(in srgb, var(--step-soft) 75%, white)); }
 }
+
+/* Larger, accessible typography for profile preview */
+.modal-header { height: 64px; padding-inline: 24px; }
+.modal-header h2 { color: #26364f; font-size: 18px; font-weight: 720; letter-spacing: -.015em; }
+.modal-body { max-height: calc(100vh - 112px); padding: 24px; }
+.modal-profile-actions { margin-bottom: 18px; }
+.modal-profile-actions button { height: 40px; padding-inline: 14px; font-size: 13px; }
+
+.profile-status { padding: 5px 9px; gap: 5px; font-size: 11px; }
+.profile-hero h1 { font-size: 26px; }
+.profile-hero p { font-size: 13px; line-height: 1.5; }
+.profile-section { padding: 26px 28px; }
+.profile-section h3 { margin-bottom: 19px; gap: 10px; font-size: 16px; line-height: 1.4; }
+.profile-grid { gap: 18px 28px; }
+.profile-item { gap: 6px; }
+.profile-item span { font-size: 12px; line-height: 1.4; }
+.profile-item b { font-size: 14px; line-height: 1.55; }
+.parent-cards { gap: 16px; }
+.parent-cards article { padding: 20px; border-radius: 13px; }
+.parent-cards article > span { font-size: 11px; }
+.parent-cards h4 { margin: 8px 0 6px; font-size: 16px; line-height: 1.4; }
+.parent-cards p { margin-top: 6px; gap: 7px; font-size: 13px; line-height: 1.45; }
+
+@media (max-width: 640px) {
+  .modal-backdrop { padding: 8px; }
+  .modal-header { height: 60px; padding-inline: 16px; }
+  .modal-header h2 { font-size: 17px; }
+  .modal-body { max-height: calc(100vh - 76px); padding: 11px; }
+  .profile-hero { padding: 22px 18px; }
+  .profile-status { font-size: 10px; }
+  .profile-hero h1 { font-size: 21px; }
+  .profile-hero p { font-size: 12px; }
+  .profile-section { padding: 21px 17px; }
+  .profile-section h3 { margin-bottom: 17px; font-size: 15px; }
+  .profile-grid { grid-template-columns: 1fr; gap: 16px; }
+  .profile-grid.three { grid-template-columns: 1fr 1fr; gap: 16px 14px; }
+  .profile-item span { font-size: 11px; }
+  .profile-item b { font-size: 13px; }
+  .parent-cards article { padding: 17px; }
+  .parent-cards h4 { font-size: 15px; }
+  .parent-cards p { font-size: 12px; }
+}
