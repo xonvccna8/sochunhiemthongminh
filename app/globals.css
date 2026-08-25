@@ -1037,7 +1037,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .landing-v2 .floating-pill.bottom { left: 0; }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 980px) {
   .landing-v2 .nav-inner nav { padding: 10px; border-radius: 15px; }
   .landing-v2 .nav-inner nav a { padding: 12px; }
   .landing-v2 .hero { min-height: auto; }
