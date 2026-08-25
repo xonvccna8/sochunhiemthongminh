@@ -20,6 +20,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 import { db } from '@/lib/firebase';
+import { CLASS_ROSTER } from '@/lib/class-roster';
 import { FIXED_CLASS, FIXED_SCHOOL_YEAR, FIXED_TEACHER, StudentProfile, emptyProfile, profileCompletion, requiredProfileFields } from '@/lib/types';
 import { Field, Modal, Notice } from './ui';
 import ProfileView from './profile-view';
@@ -46,6 +47,22 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
 
   const set = (key: keyof StudentProfile, value: string) => setProfile((current) => ({ ...current, [key]: value }));
   const input = (key: keyof StudentProfile) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => set(key, event.target.value);
+  const chooseStudent = (value: string) => {
+    const rosterStudent = CLASS_ROSTER.find((item) => String(item.no) === value);
+    if (!rosterStudent) {
+      setProfile((current) => ({ ...current, rosterNumber: '', formerSchool: '' }));
+      return;
+    }
+    setProfile((current) => ({
+      ...current,
+      rosterNumber: String(rosterStudent.no),
+      fullName: rosterStudent.fullName,
+      birthDate: rosterStudent.birthDateISO,
+      gender: rosterStudent.gender,
+      ethnic: rosterStudent.ethnic,
+      formerSchool: rosterStudent.formerSchool,
+    }));
+  };
 
   const validate = () => {
     const missing = requiredProfileFields.filter((key) => !String(profile[key] || '').trim());
@@ -128,10 +145,12 @@ export default function StudentPortal({ user, initialProfile, onLogout }: { user
                 <div className="form-heading"><span><UserRound size={20} /></span><div><p>BƯỚC 01</p><h1>Thông tin học sinh</h1><small>Cung cấp thông tin cá nhân và địa chỉ liên lạc hiện tại.</small></div></div>
                 <div className="fixed-info"><div><School size={18} /><span><small>Học sinh lớp</small><b>{FIXED_CLASS}</b></span></div><div><Home size={18} /><span><small>Năm học</small><b>{FIXED_SCHOOL_YEAR}</b></span></div><p>Các thông số này được giáo viên thiết lập cố định.</p></div>
                 <div className="form-grid">
-                  <Field label="Họ và tên" required className="span-2"><input value={profile.fullName} onChange={input('fullName')} placeholder="Nhập đầy đủ họ và tên" /></Field>
-                  <Field label="Ngày sinh" required><input type="date" value={profile.birthDate} onChange={input('birthDate')} /></Field>
-                  <Field label="Giới tính" required><select value={profile.gender} onChange={input('gender')}><option value="">Chọn giới tính</option><option>Nam</option><option>Nữ</option><option>Khác</option></select></Field>
-                  <Field label="Dân tộc" required><input value={profile.ethnic} onChange={input('ethnic')} /></Field>
+                  <Field label="Chọn học sinh trong danh sách lớp 10C3" required className="span-2" hint="Thông tin chính thức sẽ được điền tự động từ danh sách nhà trường."><select value={profile.rosterNumber} onChange={(event) => chooseStudent(event.target.value)}><option value="">— Chọn đúng họ và tên của em —</option>{CLASS_ROSTER.map((item) => <option key={item.no} value={item.no}>{String(item.no).padStart(2, '0')}. {item.fullName}</option>)}</select></Field>
+                  <Field label="Họ và tên" required className="span-2"><input value={profile.fullName} disabled placeholder="Chọn học sinh ở danh sách phía trên" /></Field>
+                  <Field label="Ngày sinh" required><input type="date" value={profile.birthDate} disabled /></Field>
+                  <Field label="Giới tính" required><input value={profile.gender} disabled /></Field>
+                  <Field label="Dân tộc" required><input value={profile.ethnic} disabled /></Field>
+                  <Field label="Trường THCS đã học" className="span-2"><input value={profile.formerSchool} disabled /></Field>
                   <Field label="Nơi sinh" required><input value={profile.birthPlace} onChange={input('birthPlace')} placeholder="Tỉnh/Thành phố" /></Field>
                   <Field label="Hộ khẩu thường trú" required className="span-2"><textarea rows={2} value={profile.householdRegistration} onChange={input('householdRegistration')} placeholder="Số nhà, đường/thôn, xã/phường, tỉnh/thành" /></Field>
                   <Field label="Địa chỉ liên lạc hiện tại" required className="span-2"><textarea rows={2} value={profile.currentAddress} onChange={input('currentAddress')} placeholder="Địa chỉ đang sinh sống" /></Field>

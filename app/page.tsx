@@ -24,7 +24,7 @@ import {
   X,
 } from 'lucide-react';
 import { auth, db } from '@/lib/firebase';
-import { StudentProfile, UserRecord } from '@/lib/types';
+import { FIXED_TEACHER, StudentProfile, UserRecord } from '@/lib/types';
 import AuthScreen from '@/components/auth-screen';
 import StudentPortal from '@/components/student-portal';
 import TeacherPortal from '@/components/teacher-portal';
@@ -63,7 +63,7 @@ function Landing({ onLogin }: { onLogin: () => void }) {
             <div className="floating-pill top"><span><CheckCircle2 size={18} /></span><div><b>Hồ sơ đã hoàn thành</b><small>Vừa được cập nhật</small></div></div>
             <div className="product-window">
               <div className="product-top"><div className="mini-brand"><span>S</span><b>Sổ Chủ Nhiệm</b></div><div className="product-user"><i /><i /><span>NX</span></div></div>
-              <div className="product-layout"><aside><i className="active" /><i /><i /><i /><i /></aside><section><div className="product-heading"><div><small>BẢNG ĐIỀU KHIỂN</small><b>Chào buổi sáng, thầy Xô!</b></div><button>Xuất Excel</button></div><div className="mini-stats"><article><span className="blue"><UsersRound size={17} /></span><small>Tổng học sinh</small><b>42</b></article><article><span className="green"><CheckCircle2 size={17} /></span><small>Đã hoàn thành</small><b>38</b></article><article><span className="amber"><FileCheck2 size={17} /></span><small>Chưa hoàn thành</small><b>04</b></article></div><div className="mini-table"><header><b>Hồ sơ học sinh</b><span>Tìm kiếm</span></header>{['Nguyễn Minh Anh', 'Trần Gia Hân', 'Lê Hoàng Nam'].map((name, index) => <div key={name}><span className={`avatar a${index}`}>{name.charAt(0)}</span><b>{name}</b><i><u style={{ width: index === 2 ? '72%' : '100%' }} /></i><em className={index === 2 ? 'draft' : ''}>{index === 2 ? 'Bản nháp' : 'Hoàn thành'}</em></div>)}</div></section></div>
+              <div className="product-layout"><aside><i className="active" /><i /><i /><i /><i /></aside><section><div className="product-heading"><div><small>BẢNG ĐIỀU KHIỂN</small><b>Chào buổi sáng, thầy Xô!</b></div><button>Xuất Excel</button></div><div className="mini-stats"><article><span className="blue"><UsersRound size={17} /></span><small>Tổng học sinh</small><b>50</b></article><article><span className="green"><CheckCircle2 size={17} /></span><small>Danh sách chính thức</small><b>50</b></article><article><span className="amber"><FileCheck2 size={17} /></span><small>Năm học</small><b>26–27</b></article></div><div className="mini-table"><header><b>Danh sách học sinh 10C3</b><span>Tìm kiếm</span></header>{['Vi Thị Ngọc Hiền', 'Vi Thị Khánh Ly', 'Vi Đức Hoàng'].map((name, index) => <div key={name}><span className={`avatar a${index}`}>{name.charAt(0)}</span><b>{name}</b><i><u style={{ width: index === 2 ? '72%' : '100%' }} /></i><em className={index === 2 ? 'draft' : ''}>{index === 2 ? 'Chưa khai' : 'Đã xác nhận'}</em></div>)}</div></section></div>
             </div>
             <div className="floating-pill bottom"><span><FileSpreadsheet size={18} /></span><div><b>Xuất đúng mẫu nhà trường</b><small>Excel · 1 chạm</small></div></div>
           </div>
@@ -160,7 +160,7 @@ export default function Home() {
 
   if (publicToken) return <PublicProfilePage token={publicToken} onHome={() => { window.history.replaceState({}, '', '/'); setPublicToken(''); }} />;
   if (loading) return <Spinner />;
-  if (user && record?.role === 'teacher') return <TeacherPortal teacherName={record.displayName || 'Nguyễn Văn Xô'} onLogout={logout} />;
+  if (user && record?.role === 'teacher') return <TeacherPortal teacherName={FIXED_TEACHER} onLogout={logout} />;
   if (user && record?.role === 'student') return <StudentPortal user={user} initialProfile={profile} onLogout={logout} />;
   if (screen === 'auth') return <AuthScreen onBack={() => setScreen('landing')} />;
   return <Landing onLogin={() => setScreen('auth')} />;

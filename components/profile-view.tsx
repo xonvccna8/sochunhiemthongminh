@@ -3,6 +3,12 @@
 import { CalendarDays, Home, Phone, School, ShieldCheck, UserRound, UsersRound } from 'lucide-react';
 import { StudentProfile } from '@/lib/types';
 
+function displayDate(value?: string) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const [year, month, day] = value.split('-');
+  return `${day}/${month}/${year}`;
+}
+
 function Item({ label, value }: { label: string; value?: string }) {
   return <div className="profile-item"><span>{label}</span><b>{value || '—'}</b></div>;
 }
@@ -22,12 +28,14 @@ export default function ProfileView({ profile, publicMode = false }: { profile: 
       <section className="profile-section">
         <h3><UserRound size={19} /> Thông tin học sinh</h3>
         <div className="profile-grid three">
-          <Item label="Ngày sinh" value={profile.birthDate} />
+          <Item label="Ngày sinh" value={displayDate(profile.birthDate)} />
           <Item label="Giới tính" value={profile.gender} />
           <Item label="Dân tộc" value={profile.ethnic} />
           <Item label="Nơi sinh" value={profile.birthPlace} />
           <Item label="Đoàn viên" value={profile.youthUnion} />
           <Item label="Đội viên" value={profile.youngPioneers} />
+          <Item label="STT danh sách lớp" value={profile.rosterNumber} />
+          <Item label="Trường THCS đã học" value={profile.formerSchool} />
         </div>
       </section>
 
@@ -72,8 +80,8 @@ export default function ProfileView({ profile, publicMode = false }: { profile: 
       <section className="profile-section compact">
         <h3><CalendarDays size={19} /> Thông tin trường học</h3>
         <div className="profile-grid three">
-          <Item label="Ngày nhập trường" value={profile.entryDate} />
-          <Item label="Ngày ra trường" value={profile.exitDate} />
+          <Item label="Ngày nhập trường" value={displayDate(profile.entryDate)} />
+          <Item label="Ngày ra trường" value={displayDate(profile.exitDate)} />
           <Item label="Giáo viên chủ nhiệm" value={profile.teacherName} />
         </div>
       </section>

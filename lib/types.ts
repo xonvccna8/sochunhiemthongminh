@@ -11,9 +11,11 @@ export type StudentProfile = {
   ownerId: string;
   email: string;
   fullName: string;
+  rosterNumber: string;
   birthDate: string;
   gender: string;
   ethnic: string;
+  formerSchool: string;
   birthPlace: string;
   householdRegistration: string;
   currentAddress: string;
@@ -54,9 +56,11 @@ export const emptyProfile = (ownerId = '', email = '', fullName = ''): StudentPr
   ownerId,
   email,
   fullName,
+  rosterNumber: '',
   birthDate: '',
   gender: '',
   ethnic: 'Kinh',
+  formerSchool: '',
   birthPlace: '',
   householdRegistration: '',
   currentAddress: '',
@@ -89,6 +93,7 @@ export const emptyProfile = (ownerId = '', email = '', fullName = ''): StudentPr
 });
 
 export const requiredProfileFields: Array<keyof StudentProfile> = [
+  'rosterNumber',
   'fullName',
   'birthDate',
   'gender',
