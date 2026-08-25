@@ -33,7 +33,7 @@ import { Logo, Spinner } from '@/components/ui';
 function Landing({ onLogin }: { onLogin: () => void }) {
   const [menu, setMenu] = useState(false);
   return (
-    <main className="landing">
+    <main className="landing landing-v2">
       <header className="landing-header">
         <div className="container nav-inner">
           <Logo />
@@ -48,23 +48,29 @@ function Landing({ onLogin }: { onLogin: () => void }) {
       </header>
 
       <section className="hero">
-        <div className="hero-glow one" /><div className="hero-glow two" />
+        <div className="hero-glow one" /><div className="hero-glow two" /><div className="hero-glow three" />
         <div className="container hero-grid">
           <div className="hero-copy">
-            <span className="hero-badge"><Sparkles size={15} /> SỔ CHỦ NHIỆM SỐ · LỚP 10C3</span>
-            <h1>Quản lý hồ sơ lớp học<br /><em>gọn gàng và an tâm.</em></h1>
-            <p>Học sinh tự khai thông tin, phụ huynh xem qua liên kết riêng và giáo viên quản lý tập trung — tất cả trong một không gian chuyên nghiệp.</p>
-            <div className="hero-actions"><button onClick={onLogin}>Bắt đầu khai hồ sơ <ArrowRight size={18} /></button><a href="#tinh-nang"><Eye size={18} /> Khám phá hệ thống</a></div>
-            <div className="trust-row"><span><CheckCircle2 size={16} /> Miễn phí cho học sinh</span><span><CheckCircle2 size={16} /> Dữ liệu đồng bộ</span><span><CheckCircle2 size={16} /> Xuất Excel chuẩn mẫu</span></div>
+            <span className="hero-badge"><Sparkles size={15} /> NỀN TẢNG SỐ DÀNH RIÊNG CHO LỚP 10C3</span>
+            <h1>Hồ sơ lớp học<br /><span>rõ ràng, đồng bộ,</span><br /><em>an tâm.</em></h1>
+            <p>Một không gian chung để học sinh hoàn thiện hồ sơ, phụ huynh theo dõi và giáo viên quản lý toàn lớp — khoa học, bảo mật và dễ sử dụng.</p>
+            <div className="hero-actions"><button onClick={onLogin}>Bắt đầu ngay <ArrowRight size={18} /></button><a href="#tinh-nang"><Eye size={18} /> Xem cách hoạt động</a></div>
+            <div className="hero-metrics" aria-label="Thông tin nổi bật">
+              <article className="blue"><span><UsersRound size={19} /></span><div><strong>50</strong><small>Học sinh lớp 10C3</small></div></article>
+              <article className="violet"><span><BarChart3 size={19} /></span><div><strong>4 bước</strong><small>Quy trình rõ ràng</small></div></article>
+              <article className="green"><span><FileSpreadsheet size={19} /></span><div><strong>1 chạm</strong><small>Xuất Excel chuẩn mẫu</small></div></article>
+            </div>
           </div>
 
           <div className="hero-product">
-            <div className="floating-pill top"><span><CheckCircle2 size={18} /></span><div><b>Hồ sơ đã hoàn thành</b><small>Vừa được cập nhật</small></div></div>
+            <div className="product-backdrop"><span /><span /><span /></div>
+            <div className="floating-pill top"><span><ShieldCheck size={18} /></span><div><b>Dữ liệu được bảo vệ</b><small>Phân quyền đúng tài khoản</small></div></div>
             <div className="product-window">
               <div className="product-top"><div className="mini-brand"><span>S</span><b>Sổ Chủ Nhiệm</b></div><div className="product-user"><i /><i /><span>NX</span></div></div>
+              <div className="product-livebar"><span><i /> Dữ liệu lớp đang đồng bộ</span><b>10C3 · 2026 – 2027</b></div>
               <div className="product-layout"><aside><i className="active" /><i /><i /><i /><i /></aside><section><div className="product-heading"><div><small>BẢNG ĐIỀU KHIỂN</small><b>Chào buổi sáng, thầy Xô!</b></div><button>Xuất Excel</button></div><div className="mini-stats"><article><span className="blue"><UsersRound size={17} /></span><small>Tổng học sinh</small><b>50</b></article><article><span className="green"><CheckCircle2 size={17} /></span><small>Danh sách chính thức</small><b>50</b></article><article><span className="amber"><FileCheck2 size={17} /></span><small>Năm học</small><b>26–27</b></article></div><div className="mini-table"><header><b>Danh sách học sinh 10C3</b><span>Tìm kiếm</span></header>{['Vi Thị Ngọc Hiền', 'Vi Thị Khánh Ly', 'Vi Đức Hoàng'].map((name, index) => <div key={name}><span className={`avatar a${index}`}>{name.charAt(0)}</span><b>{name}</b><i><u style={{ width: index === 2 ? '72%' : '100%' }} /></i><em className={index === 2 ? 'draft' : ''}>{index === 2 ? 'Chưa khai' : 'Đã xác nhận'}</em></div>)}</div></section></div>
             </div>
-            <div className="floating-pill bottom"><span><FileSpreadsheet size={18} /></span><div><b>Xuất đúng mẫu nhà trường</b><small>Excel · 1 chạm</small></div></div>
+            <div className="floating-pill bottom"><span><CheckCircle2 size={18} /></span><div><b>Hồ sơ cập nhật tức thời</b><small>Sẵn sàng cho giáo viên</small></div></div>
           </div>
         </div>
       </section>
